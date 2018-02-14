@@ -70,25 +70,26 @@ public class EventListener implements Listener {
 	
 	@EventHandler
     public void onJoin(PlayerLoginEvent event) {
-		final Player player = event.getPlayer();
-		//TODO player.teleport(stuff
-		//This task is delayed because on some Minecraft versions there is a glitch that when clearing an inventory on join
-		//it makes the player deal less damage for some reason.`
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Champions.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				if (!Utils.isEmpty(player.getInventory())) player.getInventory().clear();
-				for (String value : joinItems.getConfigurationSection("JoinItems").getKeys(false)) {
-					int slot = Integer.parseInt(value);
-					if (!(slot < 0 || slot > InventoryType.PLAYER.getDefaultSize())) {
-						player.getInventory().setItem(slot, Utils.getItem(joinItems, "JoinItems." + value));
+		if (Champions.isBungeecordMode()) {
+			final Player player = event.getPlayer();
+			//This task is delayed because on some Minecraft versions there is a glitch that when clearing an inventory on join
+			//it makes the player deal less damage for some reason.`
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Champions.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					if (!Utils.isEmpty(player.getInventory())) player.getInventory().clear();
+					for (String value : joinItems.getConfigurationSection("JoinItems").getKeys(false)) {
+						int slot = Integer.parseInt(value);
+						if (!(slot < 0 || slot > InventoryType.PLAYER.getDefaultSize())) {
+							player.getInventory().setItem(slot, Utils.getItem(joinItems, "JoinItems." + value));
+						}
 					}
+					//TODO player.teleport(stuff
+					ChampionsPlayer championsPlayer = PlayerManager.getChampionsPlayer(player);
+					championsPlayer.setScoreboard(new ChampionsScoreboard(championsPlayer));
 				}
-				//TODO player.teleport(stuff
-				ChampionsPlayer championsPlayer = PlayerManager.getChampionsPlayer(player);
-				championsPlayer.setScoreboard(new ChampionsScoreboard(championsPlayer));
-			}
-		}, 1);
+			}, 1);
+		}
     }
 	
 	@EventHandler
