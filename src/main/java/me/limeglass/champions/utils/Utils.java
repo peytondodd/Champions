@@ -115,15 +115,12 @@ public class Utils {
 		return ChatColor.translateAlternateColorCodes('&', text);
 	}
 	
-	public static Boolean isSecure(String player) {
-		return (Champions.getConfiguration("config").getStringList("Staff.users").contains(player));
-	}
-	
-	public static Boolean isSecure(Player player) {
-		if (Champions.getConfiguration("config").getBoolean("Staff.enabled", true)) {
-			return (Champions.getConfiguration("config").getStringList("Staff.users").contains(player.getName()) && player.hasPermission("kitpvp.admin"));
-		} else {
-			return player.hasPermission("kitpvp.admin");
-		}
+	public static String[] getMessage(String node, Player player) {
+		FileConfiguration configuration = Champions.getConfiguration("messages");
+		String value = configuration.getString(node);
+		if (value == null) return null;
+		value = value.replaceAll(Pattern.quote("{PLAYER}"), player.getName());
+		value = value.replaceAll(Pattern.quote("{PLAYER_DISPLAY_NAME}"), player.getDisplayName());
+		return colour(value);
 	}
 }

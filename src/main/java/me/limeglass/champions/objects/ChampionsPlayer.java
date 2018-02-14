@@ -5,17 +5,22 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 
 import me.limeglass.champions.Champions;
+import me.limeglass.champions.managers.ChampionsData;
 import me.limeglass.champions.managers.PlayerManager;
 import me.limeglass.champions.scoreboard.ChampionsScoreboard;
 import me.limeglass.champions.utils.Utils;
 
 public class ChampionsPlayer {
-
-	private final Player player;
+	
+	private Boolean ingame = false, connected = false;
 	private ChampionsScoreboard scoreboard;
-	private Boolean ingame = false;
+	private Location pastLocation;
+	private final Player player;
+	private Inventory saved;
 	private String map;
 	private Kit kit;
 	
@@ -78,6 +83,15 @@ public class ChampionsPlayer {
 		return ingame;
 	}
 	
+	public void setConnected(Boolean connected) {
+		this.connected = connected;
+	}
+	
+	public Boolean isConnected() {
+		if (Champions.isBungeecordMode()) connected = true;
+		return connected;
+	}
+	
 	public void setIngame(Boolean ingame) {
 		this.ingame = ingame;
 	}
@@ -102,9 +116,53 @@ public class ChampionsPlayer {
 	public ChampionsScoreboard getScoreboard() {
 		return scoreboard;
 	}
+	
+	public Inventory getSavedInventory() {
+		return saved;
+	}
+
+	public void setSavedInventory(Inventory inventory) {
+		this.saved = inventory;
+	}
+	
+	public Location getPastLocation() {
+		return pastLocation;
+	}
+
+	public void setPastLocation(Location pastLocation) {
+		this.pastLocation = pastLocation;
+	}
 
 	public void setScoreboard(ChampionsScoreboard scoreboard) {
 		this.scoreboard = scoreboard;
 		player.setScoreboard(scoreboard.getScoreboard());
+	}
+	
+	public void quit() {
+		connected = false;
+		ingame = false;
+		if (Champions.getConfiguration("config").getBoolean("endTeleportSpawn")) {
+			player.teleport(ChampionsData.getSpawn());
+		} else {
+			if (pastLocation == null) player.teleport(ChampionsData.getSpawn());
+			else player.teleport(pastLocation);
+		}
+		//TODO insert quit stuff
+	}
+	
+	public void join() {
+		saved = player.getInventory();
+		pastLocation = player.getLocation();
+		if (!Utils.isEmpty(player.getInventory())) player.getInventory().clear();
+		for (String value : Champions.getConfiguration("joinItems").getConfigurationSection("JoinItems").getKeys(false)) {
+			int slot = Integer.parseInt(value);
+			if (!(slot < 0 || slot > InventoryType.PLAYER.getDefaultSize())) {
+				player.getInventory().setItem(slot, Utils.getItem(Champions.getConfiguration("joinItems"), "JoinItems." + value));
+			}
+		}
+		//TODO player.teleport(stuff
+		setScoreboard(new ChampionsScoreboard(this));
+		player.teleport(ChampionsData.getSpawn());
+		connected = true;
 	}
 }

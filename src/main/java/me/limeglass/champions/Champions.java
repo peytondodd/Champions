@@ -30,18 +30,21 @@ public class Champions extends JavaPlugin {
 	private final static String nameplate = "[Champions] ";
 	private static ChampionsAddon registrar;
 	private static Champions instance;
+	private static File championsDataFolder;
 	
 	public void onEnable(){
 		instance = this;
 		//getCommand("champions").setExecutor(new CommandHandler());
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 		File configFile = new File(getDataFolder(), "config.yml");
+		championsDataFolder = new File(getDataFolder(), File.separator + "data");
+		championsDataFolder.mkdir();
 		//If newer version was found, update config.
 		if (!getDescription().getVersion().equals(getConfig().getString("version"))) {
 			if (configFile.exists()) configFile.delete();
 		}
 		//Create all the default files
-		for (String name : Arrays.asList("config", "joinItems", "abilities", "messages", "kits", "menus")) {
+		for (String name : Arrays.asList("config", "data", "joinItems", "abilities", "messages", "kits", "menus")) {
 			File file = new File(getDataFolder(), name + ".yml");
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
@@ -103,5 +106,13 @@ public class Champions extends JavaPlugin {
 
 	public static void consoleMessage(String... messages) {
 		for (String text : messages) Bukkit.getConsoleSender().sendMessage(Utils.cc(nameplate + text));
+	}
+
+	public static File getChampionsDataFolder() {
+		return championsDataFolder;
+	}
+
+	public static void setChampionsDataFolder(File championsDataFolder) {
+		Champions.championsDataFolder = championsDataFolder;
 	}
 }

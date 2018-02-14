@@ -17,6 +17,8 @@ public class Functions {
 			playerCommand(player, function);
 		} else if (function.equalsIgnoreCase("Quit") && player != null) {
 			quit(player);
+		} else if (function.equalsIgnoreCase("Join") && player != null) {
+			player.join();
 		}
 	}
 	
@@ -24,9 +26,8 @@ public class Functions {
 		if (Champions.isBungeecordMode()) {
 			//String server = Champions.getConfiguration("config").getString("FallbackServer");
 			//TODO insert PluginMessage to send to server.
-		} else {
-			//TODO insert the quit function to leave the game.
 		}
+		player.quit();
 	}
 	
 	public static void playerCommand(ChampionsPlayer player, String input) {

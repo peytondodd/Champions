@@ -16,6 +16,8 @@ public class PlayerManager {
 	}
 	
 	public static void removePlayer(ChampionsPlayer player) {
+		player.setConnected(false);
+		player.setIngame(false);
 		if (players.contains(player)) players.remove(player);
 	}
 	

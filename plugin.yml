@@ -15,3 +15,6 @@ permissions:
   champions.bungeemode.moveinventory:
     description: Gives access to move items in the inventory when the bungeecord mode is enabled.
     default: op
+  champions.admin:
+    description: Gives access to setup champions and other components.
+    default: op

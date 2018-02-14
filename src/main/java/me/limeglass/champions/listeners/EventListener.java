@@ -19,7 +19,6 @@ import me.limeglass.champions.managers.Functions;
 import me.limeglass.champions.managers.InventoryManager;
 import me.limeglass.champions.managers.PlayerManager;
 import me.limeglass.champions.objects.ChampionsPlayer;
-import me.limeglass.champions.scoreboard.ChampionsScoreboard;
 import me.limeglass.champions.utils.Utils;
 
 public class EventListener implements Listener {
@@ -36,7 +35,7 @@ public class EventListener implements Listener {
 			InventoryManager.getMenu(inventory).onInventoryClick(event);
 		} else if (inventory.getType() == InventoryType.PLAYER && championsPlayer.isIngame()) {
 			if (!player.hasPermission("champions.ingame.moveinventory")) event.setCancelled(true);
-		} else if (inventory.getType() == InventoryType.PLAYER) {
+		} else if (inventory.getType() == InventoryType.PLAYER && championsPlayer.isConnected()) {
 			if (Champions.isBungeecordMode() && !player.hasPermission("champions.bungeemode.moveinventory")) event.setCancelled(true);
 			if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
 				if (Utils.getItem(joinItems, "JoinItems." + event.getSlot()).isSimilar(event.getCurrentItem())) {
@@ -54,7 +53,7 @@ public class EventListener implements Listener {
 		Player player = event.getPlayer();
 		ChampionsPlayer championsPlayer = PlayerManager.getChampionsPlayer(player);
 		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			if (event.getItem() != null && event.getItem().getType() != Material.AIR) {
+			if (event.getItem() != null && event.getItem().getType() != Material.AIR && championsPlayer.isConnected()) {
 				for (String slot : joinItems.getConfigurationSection("JoinItems").getKeys(false)) {
 					if (Utils.getItem(joinItems, "JoinItems." + slot).isSimilar(event.getItem())) {
 						event.setCancelled(true);
@@ -77,16 +76,7 @@ public class EventListener implements Listener {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Champions.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					if (!Utils.isEmpty(player.getInventory())) player.getInventory().clear();
-					for (String value : joinItems.getConfigurationSection("JoinItems").getKeys(false)) {
-						int slot = Integer.parseInt(value);
-						if (!(slot < 0 || slot > InventoryType.PLAYER.getDefaultSize())) {
-							player.getInventory().setItem(slot, Utils.getItem(joinItems, "JoinItems." + value));
-						}
-					}
-					//TODO player.teleport(stuff
-					ChampionsPlayer championsPlayer = PlayerManager.getChampionsPlayer(player);
-					championsPlayer.setScoreboard(new ChampionsScoreboard(championsPlayer));
+					PlayerManager.getChampionsPlayer(player).join();
 				}
 			}, 1);
 		}
