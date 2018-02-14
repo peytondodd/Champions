@@ -1,0 +1,8 @@
+prefix: "&7[&6AussieMC&7] &7"
+colours:
+    main: "&6"
+    secondary: "&e"
+    third: "&7"
+abilityCooldown: "{3}Please wait {2}{COOLDOWN}{3} seconds before using the ability {2}{ABILITY}{3} again."
+abilityCooldownFinish: "{3}You may now use ability {2}{ABILITY}{3} again!"
+kitSelect: "{1}You have selected kit {2}{KIT}{1}!"
