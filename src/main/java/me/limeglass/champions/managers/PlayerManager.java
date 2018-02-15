@@ -21,6 +21,15 @@ public class PlayerManager {
 		if (players.contains(player)) players.remove(player);
 	}
 	
+	public static Boolean containsPlayer(Player player) {
+		for (ChampionsPlayer championsPlayer : players) {
+			if (championsPlayer.getPlayer().getUniqueId() == player.getUniqueId()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static Set<ChampionsPlayer> getPlayers() {
 		return players;
 	}
@@ -58,6 +67,9 @@ public class PlayerManager {
 	}
 	
 	public static void clearPlayers() {
+		for (ChampionsPlayer player : players) {
+			player.quit();
+		}
 		players.clear();
 	}
 }

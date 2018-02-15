@@ -3,10 +3,13 @@ package me.limeglass.champions.utils;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,6 +21,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import me.limeglass.champions.Champions;
+import me.limeglass.champions.managers.GameManager;
+import me.limeglass.champions.objects.ChampionsGame;
+import me.limeglass.champions.objects.ChampionsGame.ChampionsMode;
 
 public class Utils {
 	
@@ -56,6 +62,20 @@ public class Utils {
 			return (T) method.invoke(clazz, object.replace("\"", "").trim().replace(" ", "_").toUpperCase());
 		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException error) {
 			Champions.consoleMessage("&cUnknown type " + object + " in " + clazz.getName());
+			return null;
+		}
+	}
+	
+	public static Set<String> getEnums(Class<?> clazz) {
+		try {
+			final Method method = clazz.getMethod("values");
+			method.setAccessible(true);
+			Set<String> enums = new HashSet<String>();
+			for (Object object : (Object[]) method.invoke(clazz)) {
+				enums.add(object.toString());
+			}
+			return enums;
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException error) {
 			return null;
 		}
 	}
@@ -115,12 +135,30 @@ public class Utils {
 		return ChatColor.translateAlternateColorCodes('&', text);
 	}
 	
-	public static String[] getMessage(String node, Player player) {
+	public static String[] getMessage(Boolean prefix, String node, Player player) {
+		List<String> values = new ArrayList<String>();
 		FileConfiguration configuration = Champions.getConfiguration("messages");
-		String value = configuration.getString(node);
-		if (value == null) return null;
-		value = value.replaceAll(Pattern.quote("{PLAYER}"), player.getName());
-		value = value.replaceAll(Pattern.quote("{PLAYER_DISPLAY_NAME}"), player.getDisplayName());
-		return colour(value);
+		if (configuration.isList(node)) values = configuration.getStringList(node);
+		else values.add(configuration.getString(node));
+		if (prefix) {
+			values.add(0, configuration.getString("prefix") + values.get(0));
+			values.remove(1);
+		}
+		if (values == null) return null;
+		List<String> toReturn = new ArrayList<String>();
+		for (String value : values) {
+			value = value.replaceAll(Pattern.quote("{TEAM1}"), Champions.getConfiguration("config").getString("Teams.colour1"));
+			value = value.replaceAll(Pattern.quote("{TEAM2}"), Champions.getConfiguration("config").getString("Teams.colour2"));
+			value = value.replaceAll(Pattern.quote("{PLAYER}"), player.getName());
+			value = value.replaceAll(Pattern.quote("{PLAYER_DISPLAY_NAME}"), player.getDisplayName());
+			if (GameManager.tempgames.get(player) != null) {
+				ChampionsGame game = GameManager.tempgames.get(player);
+				value = value.replaceAll(Pattern.quote("{GAME_NAME}"), game.getName());
+				value = value.replaceAll(Pattern.quote("{GAME_MODE}"), game.getMode().toString());
+			}
+			value = value.replaceAll(Pattern.quote("{MODES}"), getEnums(ChampionsMode.class).toString());
+			toReturn.add(cc(colour(value)[0]));
+		}
+		return toReturn.toArray(new String[toReturn.size()]);
 	}
 }

@@ -5,12 +5,12 @@
 #		Makes the player execute a command when this function is ran, remove the [arguments] and place your command.
 #		May be split into multiple commands by using ;
 #		Example: 
-			function: "PlayerCommand:/potato"
+#			function: "PlayerCommand:/potato"
 # 	ConsoleCommand:[arguments]
 #		Execute a console command when this function is ran, remove the [arguments] and place your command.
 #		May be split into multiple commands by using ;
 #		Example: 
-			function: "ConsoleCommand:/broadcast &6Hello world!;/broadcast &5Second line!"
+#			function: "ConsoleCommand:/broadcast &6Hello world!;/broadcast &5Second line!"
 
 JoinItems:
     8:

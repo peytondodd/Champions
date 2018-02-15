@@ -9,6 +9,10 @@ debug: false
 Bungeecord: false
 FallbackServer: "Hub"
 
+Teams:
+    colour1: "RED"
+    colour2: "BLUE"
+
 Data:
     # How long in minutes should Kitpvp backup player data?
     # Default is 5 hours

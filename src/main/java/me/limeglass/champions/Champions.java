@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.limeglass.champions.commands.CommandHandler;
 import me.limeglass.champions.listeners.EventListener;
 import me.limeglass.champions.utils.Utils;
 
@@ -34,7 +35,7 @@ public class Champions extends JavaPlugin {
 	
 	public void onEnable(){
 		instance = this;
-		//getCommand("champions").setExecutor(new CommandHandler());
+		getCommand("champions").setExecutor(new CommandHandler());
 		getServer().getPluginManager().registerEvents(new EventListener(), this);
 		File configFile = new File(getDataFolder(), "config.yml");
 		championsDataFolder = new File(getDataFolder(), File.separator + "data");
@@ -67,7 +68,6 @@ public class Champions extends JavaPlugin {
 	public static void save(String configuration) {
 		try {
 			File configurationFile = new File(instance.getDataFolder(), configuration + ".yml");
-			consoleMessage(configuration);
 			getConfiguration(configuration).save(configurationFile);
 		} catch (IOException e) {
 			e.printStackTrace();

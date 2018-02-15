@@ -38,7 +38,7 @@ public class ChampionsData {
 		data.set("spawn.pitch", location.getPitch());
 		data.set("spawn.yaw", location.getYaw());
 		data.set("spawn.world", location.getWorld().getName());
-		Champions.save("games");
+		Champions.save("data");
 		spawn = location;
 	}
 }

@@ -84,8 +84,11 @@ public class EventListener implements Listener {
 	
 	@EventHandler
     public void onDisconnect(PlayerQuitEvent event) {
-		ChampionsPlayer player = PlayerManager.getChampionsPlayer(event.getPlayer());
-		PlayerManager.removePlayer(player);
+		//because Spigot unloads plugins before this event is called...
+		try {
+			ChampionsPlayer player = PlayerManager.getChampionsPlayer(event.getPlayer());
+			PlayerManager.removePlayer(player);
+		} catch (Exception stupidSpigot) {}
     }
 	
 	@EventHandler
