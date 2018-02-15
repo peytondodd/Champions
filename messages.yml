@@ -58,7 +58,8 @@ setup:
         - "{2}Keep in mind that this needs to be ran 5 times for each side,"
         - "{2}or depends on where you want to set them up. It's best to have 5 near each team spawn."
         - "{2}There are 5 different kits that can be choosen."
-        - "{2}&l/champions setup addkitspawn"
+        - "{2}&l/champions setup addkitspawn (kit)"
+        - "{1}Current kits are {KITS}"
         - " "
     6:
         - "{3}Added kit spawn to arena &l{GAME_NAME}"

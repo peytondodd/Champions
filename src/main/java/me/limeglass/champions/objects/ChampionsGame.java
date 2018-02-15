@@ -1,13 +1,26 @@
 package me.limeglass.champions.objects;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import me.limeglass.champions.Champions;
 import me.limeglass.champions.managers.GameManager;
 import me.limeglass.champions.managers.PlayerManager;
 
 public class ChampionsGame {
 	
+	private Map<Integer, Set<Location>> KIT_SPAWNS = new HashMap<Integer, Set<Location>>();
+	private FileConfiguration data = Champions.getConfiguration("data");
+	private Set<Location> TEAM1_SPAWNS = new LinkedHashSet<Location>();
+	private Set<Location> TEAM2_SPAWNS = new LinkedHashSet<Location>();
 	private final ChampionsMode mode;
 	private ChampionsState state;
 	private String name;
@@ -54,6 +67,75 @@ public class ChampionsGame {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public Set<Location> getKitSpawns(String kit) {
+		int index = 1;
+		for (String node : Champions.getConfiguration("kits").getConfigurationSection("kits").getKeys(false)) {
+			if (node.equalsIgnoreCase(kit)) {
+				if (!KIT_SPAWNS.containsKey(index) || KIT_SPAWNS.get(index).isEmpty()) {
+					KIT_SPAWNS.put(index, getLocations("Arenas." + name + ".kit" + index + ".spawns"));
+				}
+				return KIT_SPAWNS.get(index);
+			}
+			index++;
+		}
+		return null;
+	}
+	
+	//TODO
+	public void addKitSpawn(int team, int index, Location location) {
+		String node = "Arenas." + name + ".team" + team + ".spawns." + index;
+		data.set(node + ".x", location.getX());
+		data.set(node + ".y", location.getY());
+		data.set(node + ".z", location.getZ());
+		data.set(node + ".pitch", location.getPitch());
+		data.set(node + ".yaw", location.getYaw());
+		data.set(node + ".world", location.getWorld().getName());
+		Champions.save("data");
+		if (team == 1) TEAM1_SPAWNS.add(location);
+		else TEAM2_SPAWNS.add(location);
+	}
+	
+	public Set<Location> getTeamSpawns(int team) {
+		if (TEAM1_SPAWNS == null || TEAM1_SPAWNS.isEmpty()) {
+			TEAM1_SPAWNS = getLocations("Arenas." + name + ".team1.spawns");
+		}
+		if (TEAM2_SPAWNS == null || TEAM2_SPAWNS.isEmpty()) {
+			TEAM2_SPAWNS = getLocations("Arenas." + name + ".team2.spawns");
+		}
+		return (team == 1) ? TEAM1_SPAWNS : TEAM2_SPAWNS;
+	}
+	
+	public void addTeamSpawn(int team, int index, Location location) {
+		String node = "Arenas." + name + ".team" + team + ".spawns." + index;
+		data.set(node + ".x", location.getX());
+		data.set(node + ".y", location.getY());
+		data.set(node + ".z", location.getZ());
+		data.set(node + ".pitch", location.getPitch());
+		data.set(node + ".yaw", location.getYaw());
+		data.set(node + ".world", location.getWorld().getName());
+		Champions.save("data");
+		if (team == 1) TEAM1_SPAWNS.add(location);
+		else TEAM2_SPAWNS.add(location);
+	}
+	
+	private Set<Location> getLocations(String node) {
+		Set<Location> LOCATIONS = new LinkedHashSet<Location>();
+		if (data.isConfigurationSection(node)) {
+			for (String index : data.getConfigurationSection(node).getKeys(false)) {
+				int x = data.getInt(node + "." + index + ".x", 0);
+				int y = data.getInt(node + "." + index + ".y", 0);
+				int z = data.getInt(node + "." + index + ".z", 0);
+				int pitch = data.getInt(node + "." + index + ".pitch", 0);
+				int yaw = data.getInt(node + "." + index + ".yaw", 0);
+				World world = Bukkit.getWorld(data.getString(node + "." + index + ".world", "world"));
+				if (world != null) {
+					LOCATIONS.add(new Location(world, x, y, z, pitch, yaw));
+				}
+			}
+		}
+		return LOCATIONS;
 	}
 	
 	public void setName(String name) {

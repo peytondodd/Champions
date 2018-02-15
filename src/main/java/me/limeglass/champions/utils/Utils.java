@@ -157,6 +157,7 @@ public class Utils {
 				value = value.replaceAll(Pattern.quote("{GAME_MODE}"), game.getMode().toString());
 			}
 			value = value.replaceAll(Pattern.quote("{MODES}"), getEnums(ChampionsMode.class).toString());
+			value = value.replaceAll(Pattern.quote("{KITS}"), Champions.getConfiguration("kits").getConfigurationSection("kits").getKeys(false).toString());
 			toReturn.add(cc(colour(value)[0]));
 		}
 		return toReturn.toArray(new String[toReturn.size()]);
