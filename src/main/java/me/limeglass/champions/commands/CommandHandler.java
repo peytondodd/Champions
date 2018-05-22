@@ -33,7 +33,8 @@ public class CommandHandler implements CommandExecutor {
 					GameManager.tempgames.put(player, new ChampionsGame(true, UUID.randomUUID().toString(), ChampionsMode.TEAMDEATHMATCH));
 					player.sendMessage(Utils.getMessage(true, "setup.1", player));
 				} else if (args.length >= 2) {
-					if (args.length > 2) {
+					if (game == null) player.sendMessage(Utils.getMessage(true, "setup.notInSetup", player));
+					else if (args.length > 2) {
 						if (args[1].equalsIgnoreCase("name")) {
 							game.setName(String.join(" ", Arrays.copyOfRange(args, 2, args.length)));
 							player.sendMessage(Utils.getMessage(true, "setup.2", player));
@@ -52,20 +53,45 @@ public class CommandHandler implements CommandExecutor {
 							if (team == 1) player.sendMessage(Utils.getMessage(true, "setup.4", player));
 							else player.sendMessage(Utils.getMessage(true, "setup.5", player));
 						} else if (args[1].equalsIgnoreCase("addkitspawn")) {
-							for (String node : Champions.getConfiguration("kits").getConfigurationSection("kits").getKeys(false)) {
-								if (node.equalsIgnoreCase(args[2])) {
-									String kit = node;
-									
+							int kitIndex = 1;
+							for (String node : Champions.getConfiguration("kits").getConfigurationSection("Kits").getKeys(false)) {
+								if (node.equalsIgnoreCase(args[2]) || kitIndex == Integer.parseInt(args[2])) {
+									game.addKitSpawn(kitIndex, player.getLocation());
+									if (game.kitSpawnsAreSetup()) {
+										player.sendMessage(Utils.getMessage(true, "setup.7", player));
+									} else {
+										player.sendMessage(Utils.getMessage(true, "setup.6", player));
+									}
+									break;
 								}
 							}
-						}
-					} else if (args[1].equalsIgnoreCase("quit") || args[1].equalsIgnoreCase("exit")) {
-						if (game != null) {
-							GameManager.tempgames.remove(player);
-							player.sendMessage(Utils.getMessage(true, "setup.left", player));
+						} else if (args[1].equalsIgnoreCase("capture")) {
+							game.setHasCaptures(Boolean.parseBoolean(args[2]));
+							if (game.hasCaptures()) {
+								player.sendMessage(Utils.getMessage(true, "setup.9", player));
+							} else {
+								player.sendMessage(Utils.getMessage(true, "setup.almost", player));
+							}
+						} else if (args[1].equalsIgnoreCase("addcapture") && game.hasCaptures()) {
+							game.addCapture(args[2], player.getLocation().subtract(0, 1, 0));
+							player.sendMessage(Utils.getMessage(true, "setup.10", player));
+							player.sendMessage(Utils.getMessage(true, "setup.almost", player));
 						} else {
-							player.sendMessage(Utils.getMessage(true, "setup.notInSetup", player));
+							player.sendMessage(Utils.getMessage(true, "setupInvalidInput", player));
 						}
+						//TODO Emeralds and Inventory restock setup for DOM mode when that's made.
+					} else if (args[1].equalsIgnoreCase("addspectator")) {
+						game.addSpectatorSpawn(player.getLocation());
+						player.sendMessage(Utils.getMessage(true, "setup.8", player));
+					} else if (args[1].equalsIgnoreCase("quit") || args[1].equalsIgnoreCase("exit")) {
+						GameManager.tempgames.remove(player);
+						player.sendMessage(Utils.getMessage(true, "setup.left", player));
+					} else if (args[1].equalsIgnoreCase("finish") && game != null) {
+						GameManager.addGame(game);
+						GameManager.tempgames.remove(player);
+						player.sendMessage(Utils.getMessage(true, "finish", player));
+					} else {
+						player.sendMessage(Utils.getMessage(true, "setupInvalidInput", player));
 					}
 				}
 			} else if (args[0].equalsIgnoreCase("admin") && player.hasPermission("champions.admin")) {

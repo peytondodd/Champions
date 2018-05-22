@@ -24,16 +24,20 @@ public class GameManager {
 	}
 	
 	public static Boolean containsGame(String name) {
-		for (ChampionsGame game : games) {
-			if (game.getName().equals(name)) {
-				return true;
-			}
-		}
-		return false;
+		return getGame(name) != null;
 	}
 	
 	public static Set<ChampionsGame> getGames() {
 		return games;
+	}
+	
+	public static ChampionsGame getGame(String name) {
+		for (ChampionsGame game : games) {
+			if (game.getName().equals(name)) {
+				return game;
+			}
+		}
+		return null;
 	}
 	
 	public static Set<ChampionsGame> getRunningGames() {

@@ -26,6 +26,7 @@ setspawn: "{2}The spawn has been set."
 spawnteleport: "{2}You have been teleported to the Champions spawn."
 spawnteleportIngame: "&cYou can't teleport to the Champions spawn while ingame."
 spawnNotSet: "&cThe Champions spawn has not been set."
+setupInvalidInput: "&cYou input an invalid amount of arguments, read over the setup command again and make sure to add all parameters."
 setup:
     left: "&cYou have exited the setup wizard."
     notInSetup: "&cYou are not currently in an arena setup."
@@ -55,18 +56,45 @@ setup:
     5:
         - "{3}Added spawn to team {TEAM2} in &l{GAME_NAME}"
         - "{2}Keep adding spawns until you're happy, then type the following to setup kit spawns:"
-        - "{2}Keep in mind that this needs to be ran 5 times for each side,"
-        - "{2}or depends on where you want to set them up. It's best to have 5 near each team spawn."
-        - "{2}There are 5 different kits that can be choosen."
         - "{2}&l/champions setup addkitspawn (kit)"
+        - "{2}It's best to have one kit NPC at each team spawn."
         - "{1}Current kits are {KITS}"
         - " "
     6:
         - "{3}Added kit spawn to arena &l{GAME_NAME}"
         - "{2}Just a few more kit spawns to go. Keep adding kitspawns."
-        - "{2}&l/champions setup addkitspawn"
-        - "{2}When you're ready to move on type the following to setup spectator spawns."
+        - "{2}You need to make sure you add atleast one of every kit."
+        - "{2}&l/champions setup addkitspawn (kit)"
+        - "{1}All avalible kits are {KITS}"
+    7:
+        - "{2}Now that you have setup all the kit spawns type the following to setup spectator spawns:"
         - "{2}&l/champions setup addspectator"
+        - " "
+    8:
+        - "{3}Added spectator spawn to arena &l{GAME_NAME}"
+        - "{2}Now to define if this arena should have capture zones or not."
+        - "{2}This helps prevent hiders from not playing the game in TDM."
+        - "{2}&l/champions setup capture (true/false)"
+    9:
+        - "{3}Set using capture points to &l{GAME_HAS_CAPTURE}"
+        - "{2}Capture points need to be around a glass 3x1x3 horizontal square minimum. Example: https://imgur.com/jVV1Kf9"
+        - "{2}&l/champions setup addcapture (name)"
+        - "{2}This takes the location under you, also the size can be anything 1 block tall"
+        - "&75x1x5 is recommended like in the picture."
+        - "{2}The name will be what that capture point will be called in the game."
+        - " "
+    10:
+        - "{3}Added capture point to arena &l{GAME_NAME}"
+        - "{2}Capture points need to be around a glass 3x1x3 horizontal square minimum. Example: https://imgur.com/jVV1Kf9"
+        - "{2}&l/champions setup addcapture (name)"
+        - "{2}Keep executing until you're ehappy with the amount of captures."
+        - " "
+    almost:
+        - "{2}After that you're finished, you may type:"
+        - "{2}&l/champions setup finish"
+        - " "
+    finish:
+        - "{3}You have finished the setup, game {GAME_NAME} is now live!."
         - " "
     modes:
         TEAMDEATHMATCH:

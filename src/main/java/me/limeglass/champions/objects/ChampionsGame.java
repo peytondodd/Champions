@@ -18,11 +18,14 @@ import me.limeglass.champions.managers.PlayerManager;
 public class ChampionsGame {
 	
 	private Map<Integer, Set<Location>> KIT_SPAWNS = new HashMap<Integer, Set<Location>>();
+	private Map<String, Location> CAPTURES = new HashMap<String, Location>();
 	private FileConfiguration data = Champions.getConfiguration("data");
+	private Set<Location> SPECTATOR_SPAWNS = new LinkedHashSet<Location>();
 	private Set<Location> TEAM1_SPAWNS = new LinkedHashSet<Location>();
 	private Set<Location> TEAM2_SPAWNS = new LinkedHashSet<Location>();
 	private final ChampionsMode mode;
 	private ChampionsState state;
+	private Boolean captures;
 	private String name;
 	
 	private enum ChampionsState {
@@ -61,6 +64,14 @@ public class ChampionsGame {
 		return state == ChampionsState.INGAME;
 	}
 	
+	public Boolean hasCaptures() {
+		return captures;
+	}
+	
+	public void setHasCaptures(Boolean captures) {
+		this.captures = captures;
+	}
+	
 	public void setState(ChampionsState state) {
 		this.state = state;
 	}
@@ -83,9 +94,27 @@ public class ChampionsGame {
 		return null;
 	}
 	
-	//TODO
-	public void addKitSpawn(int team, int index, Location location) {
-		String node = "Arenas." + name + ".team" + team + ".spawns." + index;
+	public void delete() {
+		data.set("Arenas." + name, null);
+		if (GameManager.containsGame(name)) {
+			GameManager.removeGame(GameManager.getGame(name));
+		}
+		Champions.save("data");
+	}
+	
+	//This isn't working
+	public Boolean kitSpawnsAreSetup() {
+		if (KIT_SPAWNS == null || KIT_SPAWNS.isEmpty()) return false;
+		int length = Champions.getConfiguration("kits").getConfigurationSection("Kits").getKeys(false).size();
+		return KIT_SPAWNS.keySet().size() >= length * 2;
+	}
+	
+	public void addKitSpawn(int kit, Location location) {
+		String node = "Arenas." + name + ".kit" + kit + ".spawns";
+		int index = 1;
+		Set<Location> locations = getLocations(node);
+		if (locations != null) index = locations.size() + 1; 
+		node = node + "." + index;
 		data.set(node + ".x", location.getX());
 		data.set(node + ".y", location.getY());
 		data.set(node + ".z", location.getZ());
@@ -93,8 +122,35 @@ public class ChampionsGame {
 		data.set(node + ".yaw", location.getYaw());
 		data.set(node + ".world", location.getWorld().getName());
 		Champions.save("data");
-		if (team == 1) TEAM1_SPAWNS.add(location);
-		else TEAM2_SPAWNS.add(location);
+		KIT_SPAWNS.put(kit, getLocations("Arenas." + name + ".kit" + kit + ".spawns"));
+	}
+	
+	public void addSpectatorSpawn(Location location) {
+		String node = "Arenas." + name + ".spectator.spawns";
+		int index = 1;
+		Set<Location> locations = getLocations(node);
+		if (locations != null) index = locations.size() + 1; 
+		node = node + "." + index;
+		data.set(node + ".x", location.getX());
+		data.set(node + ".y", location.getY());
+		data.set(node + ".z", location.getZ());
+		data.set(node + ".pitch", location.getPitch());
+		data.set(node + ".yaw", location.getYaw());
+		data.set(node + ".world", location.getWorld().getName());
+		Champions.save("data");
+		SPECTATOR_SPAWNS.add(location);
+	}
+	
+	public void addCapture(String name, Location location) {
+		String node = "Arenas." + name + ".capture." + name;
+		data.set(node + ".x", location.getX());
+		data.set(node + ".y", location.getY());
+		data.set(node + ".z", location.getZ());
+		data.set(node + ".pitch", location.getPitch());
+		data.set(node + ".yaw", location.getYaw());
+		data.set(node + ".world", location.getWorld().getName());
+		Champions.save("data");
+		CAPTURES.put(name, location);
 	}
 	
 	public Set<Location> getTeamSpawns(int team) {

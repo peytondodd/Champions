@@ -23,10 +23,9 @@ import me.limeglass.champions.utils.Utils;
 
 public class EventListener implements Listener {
 	
-	private final FileConfiguration joinItems = Champions.getConfiguration("joinItems");
-	
 	@EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+		final FileConfiguration joinItems = Champions.getConfiguration("joinItems");
 		Inventory inventory = event.getClickedInventory();
 		Player player = (Player) event.getWhoClicked();
 		ChampionsPlayer championsPlayer = PlayerManager.getChampionsPlayer(player);
@@ -50,6 +49,7 @@ public class EventListener implements Listener {
 	
 	@EventHandler
     public void onInteract(PlayerInteractEvent event) {
+		final FileConfiguration joinItems = Champions.getConfiguration("joinItems");
 		Player player = event.getPlayer();
 		ChampionsPlayer championsPlayer = PlayerManager.getChampionsPlayer(player);
 		if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {

@@ -16,6 +16,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.limeglass.champions.commands.CommandHandler;
 import me.limeglass.champions.listeners.EventListener;
+import me.limeglass.champions.managers.GameManager;
+import me.limeglass.champions.objects.ChampionsGame;
 import me.limeglass.champions.utils.Utils;
 
 /*
@@ -63,6 +65,12 @@ public class Champions extends JavaPlugin {
 		registrar = new ChampionsAddon(this);
 		registrar.loadClasses("me.limeglass.champions", "menus", "abilities");
 		consoleMessage("has been enabled!");
+	}
+	
+	public void onDisable() {
+		for (ChampionsGame game : GameManager.tempgames.values()) {
+			game.delete();
+		}
 	}
 	
 	public static void save(String configuration) {

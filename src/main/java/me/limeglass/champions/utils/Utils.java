@@ -155,9 +155,10 @@ public class Utils {
 				ChampionsGame game = GameManager.tempgames.get(player);
 				value = value.replaceAll(Pattern.quote("{GAME_NAME}"), game.getName());
 				value = value.replaceAll(Pattern.quote("{GAME_MODE}"), game.getMode().toString());
+				value = value.replaceAll(Pattern.quote("{GAME_HAS_CAPTURE}"), game.hasCaptures() + "");
 			}
 			value = value.replaceAll(Pattern.quote("{MODES}"), getEnums(ChampionsMode.class).toString());
-			value = value.replaceAll(Pattern.quote("{KITS}"), Champions.getConfiguration("kits").getConfigurationSection("kits").getKeys(false).toString());
+			value = value.replaceAll(Pattern.quote("{KITS}"), Champions.getConfiguration("kits").getConfigurationSection("Kits").getKeys(false).toString());
 			toReturn.add(cc(colour(value)[0]));
 		}
 		return toReturn.toArray(new String[toReturn.size()]);
