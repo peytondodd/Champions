@@ -44,7 +44,7 @@ public class CommandHandler implements CommandExecutor {
 								GameManager.tempgames.put(player, new ChampionsGame(true, game.getName(), mode));
 								player.sendMessage(Utils.getMessage(true, "setup.3", player));
 							} else {
-								player.sendMessage(Utils.getMessage(true, "modeNotFound", player));
+								player.sendMessage(Utils.getMessage(true, "setup.modeNotFound", player));
 							}
 						} else if (args[1].equalsIgnoreCase("addspawn")) {
 							String team1 = Champions.getConfiguration("config").getString("Teams.colour1");
@@ -55,7 +55,7 @@ public class CommandHandler implements CommandExecutor {
 						} else if (args[1].equalsIgnoreCase("addkitspawn")) {
 							int kitIndex = 1;
 							for (String node : Champions.getConfiguration("kits").getConfigurationSection("Kits").getKeys(false)) {
-								if (node.equalsIgnoreCase(args[2]) || kitIndex == Integer.parseInt(args[2])) {
+								if (node.equalsIgnoreCase(args[2])) {
 									game.addKitSpawn(kitIndex, player.getLocation());
 									if (game.kitSpawnsAreSetup()) {
 										player.sendMessage(Utils.getMessage(true, "setup.7", player));

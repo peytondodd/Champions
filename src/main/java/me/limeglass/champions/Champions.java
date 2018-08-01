@@ -62,6 +62,7 @@ public class Champions extends JavaPlugin {
 			}
 			files.put(name, configuration);
 		}
+		GameManager.load();
 		registrar = new ChampionsAddon(this);
 		registrar.loadClasses("me.limeglass.champions", "menus", "abilities");
 		consoleMessage("has been enabled!");

@@ -4,10 +4,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import me.limeglass.champions.Champions;
 import me.limeglass.champions.objects.ChampionsGame;
+import me.limeglass.champions.objects.ChampionsGame.ChampionsMode;
+import me.limeglass.champions.utils.Utils;
 
 public class GameManager {
 
@@ -61,5 +66,12 @@ public class GameManager {
 			game.end();
 		}
 		games.clear();
+	}
+	
+	public static void load() {
+		FileConfiguration configuration = Champions.getConfiguration("data");
+		for (String arena : configuration.getConfigurationSection("Arenas").getKeys(false)) {
+			new ChampionsGame(false, UUID.randomUUID().toString(), Utils.getEnum(ChampionsMode.class, configuration.getString("Arenas." + arena + ".gamemode", "TEAMDEATHMATCH")));
+		}
 	}
 }

@@ -14,7 +14,7 @@ Teams:
     colour2: "BLUE"
 
 Data:
-    # How long in minutes should Kitpvp backup player data?
+    # How long in minutes should Champions backup player data?
     # Default is 5 hours
     backup-timer: 300
 

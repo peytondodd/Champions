@@ -40,15 +40,11 @@ public class ChampionsGame {
 		TEAMDEATHMATCH;
 	}
 	
-	public ChampionsGame(String name, ChampionsMode mode) {
-		this.mode = mode;
-		this.name = name;
-		GameManager.addGame(this);
-	}
-	
 	public ChampionsGame(Boolean temp, String name, ChampionsMode mode) {
 		this.mode = mode;
 		this.name = name;
+		data.set("Arenas." + name + ".gamemode", mode.toString());
+		Champions.save("data");
 		if (!temp) GameManager.addGame(this);
 	}
 	
